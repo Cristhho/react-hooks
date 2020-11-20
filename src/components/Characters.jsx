@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect, useReducer, useMemo } from 'react';
 import CharacterItem from './CharacterItem';
 
 const initialState = {
@@ -31,13 +31,25 @@ const Characters = () => {
       payload: fav
     })
   }
+  const [search, setSearch] = useState('')
+  const handleSearch = (event) => {
+    setSearch(event.target.value)
+  }
+  const filteredCharacters = useMemo(() => {
+    return characters.filter((character) => {
+      return character.name.toLowerCase().includes(search.toLowerCase())
+    })
+  }, [characters, search])
   return (
     <>
       {favorites.favorites.map((fav) => (
         <li key={fav.id}>{fav.name}</li>
       ))}
+      <div className='search'>
+        <input type='text' value={search} onChange={handleSearch} placeholder='Buscar personaje' />
+      </div>
       <div className='Characters'>
-        {characters.map((character) => {
+        {filteredCharacters.map((character) => {
           return (
             <CharacterItem name={character.name} imageUrl={character.image} key={character.id} handleClick={() => handleFavorite(character)} />
           )
